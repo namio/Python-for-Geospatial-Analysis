@@ -34,7 +34,7 @@ jobs:
               # Remove "data/" do caminho para criar pseudo-pasta no asset
               asset_name="${file#data/}"
               echo "Uploading $file as $asset_name"
-              gh release upload "v1.0" "$file" --clobber --name "$asset_name"
+              gh release upload "v1.0" "$file" --clobber
             fi
           done
 
