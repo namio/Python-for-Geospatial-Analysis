@@ -10,6 +10,8 @@ on:
 jobs:
   update-release:
     runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.MY_PAT }}  # <- Aqui você coloca seu PAT
     steps:
       # 1️⃣ Clona o repositório
       - name: Checkout repository
