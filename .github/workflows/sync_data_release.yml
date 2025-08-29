@@ -1,0 +1,38 @@
+name: Sync Data Assets to Release with Pseudo-Pastas
+
+on:
+  push:
+    paths:
+      - 'data/**'  # dispara quando qualquer arquivo dentro de data muda
+
+jobs:
+  update-release:
+    runs-on: ubuntu-latest
+    steps:
+      # 1️⃣ Clona o repositório
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2️⃣ Cria ou atualiza Release
+      - name: Create or update Release
+        id: release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v1.0  # Release fixa que será atualizada
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 3️⃣ Upload de todos os arquivos mantendo pseudo-pastas
+      - name: Upload all data files
+        run: |
+          shopt -s globstar
+          for file in data/**/*; do
+            if [ -f "$file" ]; then
+              # Remove "data/" do caminho para criar pseudo-pasta no asset
+              asset_name="${file#data/}"
+              echo "Uploading $file as $asset_name"
+              gh release upload "v1.0" "$file" --clobber --name "$asset_name"
+            fi
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
