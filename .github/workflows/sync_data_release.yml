@@ -1,32 +1,31 @@
 name: Sync Data Assets to Release with Pseudo-Pastas
 
+# Dispara o workflow quando qualquer arquivo dentro da pasta data muda na branch main
 on:
   push:
     branches:
       - main
     paths:
-      - 'data/**'  # dispara quando qualquer arquivo dentro de data muda
+      - 'data/**'
 
 jobs:
   update-release:
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.MY_PAT }}  # <- Aqui você coloca seu PAT
+      GITHUB_TOKEN: ${{ secrets.MY_PAT }}  # <- Use aqui seu PAT criado como secret
     steps:
       # 1️⃣ Clona o repositório
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2️⃣ Cria ou atualiza Release
+      # 2️⃣ Cria ou atualiza a Release
       - name: Create or update Release
         id: release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v1.0  # Release fixa que será atualizada
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: v1.0  # Substitua se quiser outra tag
 
-      # 3️⃣ Upload de todos os arquivos mantendo pseudo-pastas
+      # 3️⃣ Upload de todos os arquivos dentro da pasta data mantendo pseudo-pastas
       - name: Upload all data files
         run: |
           shopt -s globstar
@@ -38,5 +37,4 @@ jobs:
               gh release upload "v1.0" "$file" --clobber --name "$asset_name"
             fi
           done
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
